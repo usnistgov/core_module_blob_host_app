@@ -1,0 +1,11 @@
+<div>
+    {%if error %}
+        <b class="text-danger"> {{ error }} </b>
+    {% else %}
+        {% if handle %}
+        <b>Handle:</b> <a target="_blank" href="{{handle}}">{{handle}}</a>
+        {% else %}
+        No file selected.
+        {% endif %}
+    {% endif %}
+</div>
