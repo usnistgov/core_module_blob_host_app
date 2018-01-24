@@ -1,27 +1,27 @@
 """ Blob host module
 """
-from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob import api as blob_api
+from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
 from core_module_blob_host_app.views.forms import BLOBHostForm
-from core_parser_app.tools.modules.exceptions import ModuleError
-from core_parser_app.tools.modules.views.builtin.popup_module import PopupModule
+from core_parser_app.tools.modules.views.builtin.popup_module import AbstractPopupModule
 from core_parser_app.tools.modules.views.module import AbstractModule
 
 
-class BlobHostModule(PopupModule):
+class BlobHostModule(AbstractPopupModule):
     """ BLOB host module
     """
+
     def __init__(self):
         """ Initialize module
         """
         popup_content = AbstractModule.render_template('core_module_blob_host_app/blob_host.html',
                                                        {'form': BLOBHostForm()})
 
-        PopupModule.__init__(self,
-                             popup_content=popup_content,
-                             button_label='Upload File',
-                             scripts=['core_module_blob_host_app/js/blob_host.js'])
+        AbstractPopupModule.__init__(self,
+                                     popup_content=popup_content,
+                                     button_label='Upload File',
+                                     scripts=['core_module_blob_host_app/js/blob_host.js'])
 
     def _retrieve_data(self, request):
         """ Retrieve module's data
