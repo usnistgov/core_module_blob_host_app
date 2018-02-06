@@ -15,13 +15,18 @@ class BlobHostModule(AbstractPopupModule):
     def __init__(self):
         """ Initialize module
         """
-        popup_content = AbstractModule.render_template('core_module_blob_host_app/blob_host.html',
-                                                       {'form': BLOBHostForm()})
-
         AbstractPopupModule.__init__(self,
-                                     popup_content=popup_content,
                                      button_label='Upload File',
                                      scripts=['core_module_blob_host_app/js/blob_host.js'])
+
+    def _get_popup_content(self):
+        """ Return popup content
+
+        Returns:
+
+        """
+        return AbstractModule.render_template('core_module_blob_host_app/blob_host.html',
+                                              {'form': BLOBHostForm()})
 
     def _retrieve_data(self, request):
         """ Retrieve module's data
