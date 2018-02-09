@@ -47,7 +47,8 @@ class BlobHostModule(AbstractPopupModule):
             try:
                 form = BLOBHostForm(request.POST, request.FILES)
                 if not form.is_valid():
-                    self.error = 'Data not properly sent to server. Please provide "file" in POST data.'
+                    self.error = 'No file uploaded.'
+                    return data
 
                 # get file from request
                 uploaded_file = request.FILES['file']
