@@ -1,2 +1,2 @@
-core_main_app==1.0.0-beta2
-core_parser_app==1.0.0-beta2
+core_main_app==1.0.0-beta3
+core_parser_app==1.0.0-beta3
