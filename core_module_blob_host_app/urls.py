@@ -1,6 +1,7 @@
 """ Url router for the blob host module
 """
 from django.conf.urls import url
+
 from core_module_blob_host_app.views.views import BlobHostModule
 
 urlpatterns = [
