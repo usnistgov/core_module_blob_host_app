@@ -1,17 +1,19 @@
 """ Blob host module
 """
+import re
+from core_module_text_area_app.settings import AUTO_ESCAPE_XML_ENTITIES
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
 from core_module_blob_host_app.views.forms import BLOBHostForm
 from core_parser_app.tools.modules.views.builtin.popup_module import AbstractPopupModule
 from core_parser_app.tools.modules.views.module import AbstractModule
+from xml_utils.xsd_tree.operations.xml_entities import XmlEntities
 
 
 class BlobHostModule(AbstractPopupModule):
     """ BLOB host module
     """
-
     def __init__(self):
         """ Initialize module
         """
@@ -39,6 +41,7 @@ class BlobHostModule(AbstractPopupModule):
         """
         data = ''
         self.error = None
+        data_xml_entities = XmlEntities()
         if request.method == 'GET':
             if 'data' in request.GET:
                 if len(request.GET['data']) > 0:
@@ -68,7 +71,7 @@ class BlobHostModule(AbstractPopupModule):
             except:
                 self.error = 'An unexpected error occurred.'
 
-        return data
+        return data_xml_entities.escape_xml_entities(data) if AUTO_ESCAPE_XML_ENTITIES else data
 
     def _render_data(self, request):
         """ Return module's data rendering
@@ -96,6 +99,14 @@ class BlobHostModule(AbstractPopupModule):
         if error is not None:
             context['error'] = error
         else:
-            context['handle'] = data
+            """We have to unescape the string before the graphical render"""
+            context['handle'] = XmlEntities.unescape_xml_entities(data)[0]
+
+        """Even if we have unescaped the graphical version of the data
+         we have to display the warning message if there are xml predefined entities"""
+        data_xml_entities = XmlEntities()
+        data_xml_entities.escape_xml_entities(data)
+        if data_xml_entities.number_of_subs_made > 0 or len(re.findall(r'((&amp;)|(&gt;)|(&lt;)|(&apos;)|(&quot;))', data)) > 0:
+            context['xml_entities_warning'] = True
 
         return AbstractModule.render_template('core_module_blob_host_app/blob_host_display.html', context)
