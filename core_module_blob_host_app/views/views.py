@@ -1,7 +1,7 @@
 """ Blob host module
 """
 import re
-from core_module_text_area_app.settings import AUTO_ESCAPE_XML_ENTITIES
+from core_module_blob_host_app.settings import AUTO_ESCAPE_XML_ENTITIES
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
