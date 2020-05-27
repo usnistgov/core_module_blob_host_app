@@ -7,4 +7,4 @@ class BLOBHostForm(forms.Form):
     """BLOB Host Upload Form
     """
 
-    file = forms.FileField(label='')
+    file = forms.FileField(label="")
