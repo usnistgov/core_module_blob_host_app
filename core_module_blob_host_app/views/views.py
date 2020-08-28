@@ -12,12 +12,10 @@ from xml_utils.xsd_tree.operations.xml_entities import XmlEntities
 
 
 class BlobHostModule(AbstractPopupModule):
-    """ BLOB host module
-    """
+    """BLOB host module"""
 
     def __init__(self):
-        """ Initialize module
-        """
+        """Initialize module"""
         AbstractPopupModule.__init__(
             self,
             button_label="Upload File",
@@ -25,7 +23,7 @@ class BlobHostModule(AbstractPopupModule):
         )
 
     def _get_popup_content(self):
-        """ Return popup content
+        """Return popup content
 
         Returns:
 
@@ -35,7 +33,7 @@ class BlobHostModule(AbstractPopupModule):
         )
 
     def _retrieve_data(self, request):
-        """ Retrieve module's data
+        """Retrieve module's data
 
         Args:
             request:
@@ -82,7 +80,7 @@ class BlobHostModule(AbstractPopupModule):
         )
 
     def _render_data(self, request):
-        """ Return module's data rendering
+        """Return module's data rendering
 
         Args:
             request:
@@ -94,7 +92,7 @@ class BlobHostModule(AbstractPopupModule):
 
     @staticmethod
     def render_blob_host_data(data, error):
-        """ Render blob host data
+        """Render blob host data
 
         Args:
             data:
