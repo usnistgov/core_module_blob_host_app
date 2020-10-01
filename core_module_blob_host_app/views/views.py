@@ -28,8 +28,22 @@ class BlobHostModule(AbstractPopupModule):
         Returns:
 
         """
+        module_id = None
+
+        if self.request:
+            module_id = self.request.GET.get("module_id", None)
+
+        # create the from and set an unique id
+        form = BLOBHostForm()
+        form.fields["file"].widget.attrs.update(
+            {"id": "file-input-%s" % str(module_id)}
+        )
         return AbstractModule.render_template(
-            "core_module_blob_host_app/blob_host.html", {"form": BLOBHostForm()}
+            "core_module_blob_host_app/blob_host.html",
+            {
+                "form": form,
+                "module_id": module_id,
+            },
         )
 
     def _retrieve_data(self, request):

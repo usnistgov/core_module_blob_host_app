@@ -1,4 +1,10 @@
 <form class='blob-host-form'>
     {% csrf_token %}
-    {{ form }}
+
+    <div class="input-group">
+      <div class="custom-file">
+          <span class="hidden">{{ form }}</span>
+        <label class="custom-file-label" for="file-input-{{module_id}}">Choose file</label>
+      </div>
+    </div>
 </form>
