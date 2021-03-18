@@ -1,10 +1,14 @@
 """ Blob host module
 """
 import re
-from core_module_blob_host_app.settings import AUTO_ESCAPE_XML_ENTITIES
+from urllib.parse import urljoin
+
+from django.urls import reverse
+
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
+from core_module_blob_host_app import settings as blob_host_settings
 from core_module_blob_host_app.views.forms import BLOBHostForm
 from core_parser_app.tools.modules.views.builtin.popup_module import AbstractPopupModule
 from core_parser_app.tools.modules.views.module import AbstractModule
@@ -16,8 +20,7 @@ class BlobHostModule(AbstractPopupModule):
 
     def __init__(self):
         """Initialize module"""
-        AbstractPopupModule.__init__(
-            self,
+        super().__init__(
             button_label="Upload File",
             scripts=[
                 "core_parser_app/js/commons/file_uploader.js",
@@ -41,13 +44,61 @@ class BlobHostModule(AbstractPopupModule):
         form.fields["file"].widget.attrs.update(
             {"id": "file-input-%s" % str(module_id)}
         )
-        return AbstractModule.render_template(
+        return super().render_template(
             "core_module_blob_host_app/blob_host.html",
             {
                 "form": form,
                 "module_id": module_id,
             },
         )
+
+    def retrieve_post_data(self, request):
+        data = ""
+        try:
+            form = BLOBHostForm(request.POST, request.FILES)
+            if not form.is_valid():
+                self.error = "No file uploaded."
+                return data
+
+            uploaded_file = request.FILES["file"]
+
+            # Create blob
+            blob = Blob(
+                filename=uploaded_file.name,
+                user_id=str(request.user.id) if request.user.id else None,
+            )
+            blob.blob = uploaded_file
+            blob_api.insert(blob)
+
+            blob_pid = None
+
+            # Retrieve Blob PID if the core_linked_records_app is installed
+            if "core_linked_records_app" in blob_host_settings.INSTALLED_APPS:
+                from core_linked_records_app.components.pid_settings import (
+                    api as pid_settings_api,
+                )
+                from core_linked_records_app.components.blob import (
+                    api as linked_records_blob_api,
+                )
+
+                # Create blob PID if `auto_set_pid` is True
+                if pid_settings_api.get().auto_set_pid:
+                    blob_pid_url = reverse(
+                        "core_linked_records_provider_record",
+                        kwargs={
+                            "provider": "local",
+                            "record": linked_records_blob_api.get_pid_for_blob(
+                                str(blob.id)
+                            ).record_name,
+                        },
+                    )
+                    blob_pid = urljoin(blob_host_settings.SERVER_URI, blob_pid_url)
+
+            # Retrieve download URI.
+            return blob_pid if blob_pid else get_blob_download_uri(blob, request)
+        except Exception as exc:  # FIXME log exception
+            self.error = "An unexpected error occurred."
+            return data
 
     def _retrieve_data(self, request):
         """Retrieve module's data
@@ -66,33 +117,11 @@ class BlobHostModule(AbstractPopupModule):
                 if len(request.GET["data"]) > 0:
                     data = request.GET["data"]
         elif request.method == "POST":
-            try:
-                form = BLOBHostForm(request.POST, request.FILES)
-                if not form.is_valid():
-                    self.error = "No file uploaded."
-                    return data
-
-                # get file from request
-                uploaded_file = request.FILES["file"]
-                # get filename from file
-                filename = uploaded_file.name
-                # get user id from request
-                user_id = str(request.user.id)
-
-                # create blob
-                blob = Blob(filename=filename, user_id=user_id)
-                # set blob file
-                blob.blob = uploaded_file
-                # save blob
-                blob_api.insert(blob)
-                # get download uri
-                data = get_blob_download_uri(blob, request)
-            except:
-                self.error = "An unexpected error occurred."
+            data = self.retrieve_post_data(request)
 
         return (
             data_xml_entities.escape_xml_entities(data)
-            if AUTO_ESCAPE_XML_ENTITIES
+            if blob_host_settings.AUTO_ESCAPE_XML_ENTITIES
             else data
         )
 
@@ -110,10 +139,6 @@ class BlobHostModule(AbstractPopupModule):
     @staticmethod
     def render_blob_host_data(data, error):
         """Render blob host data
-
-        Args:
-            data:
-            error:
 
         Returns:
 
