@@ -19,7 +19,10 @@ class BlobHostModule(AbstractPopupModule):
         AbstractPopupModule.__init__(
             self,
             button_label="Upload File",
-            scripts=["core_module_blob_host_app/js/blob_host.js"],
+            scripts=[
+                "core_parser_app/js/commons/file_uploader.js",
+                "core_module_blob_host_app/js/blob_host.js",
+            ],
         )
 
     def _get_popup_content(self):

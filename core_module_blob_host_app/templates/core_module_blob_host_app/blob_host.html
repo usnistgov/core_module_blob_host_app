@@ -1,10 +1,4 @@
 <form class='blob-host-form'>
     {% csrf_token %}
-
-    <div class="input-group">
-      <div class="custom-file">
-          <span class="hidden">{{ form }}</span>
-        <label class="custom-file-label" for="file-input-{{module_id}}">Choose file</label>
-      </div>
-    </div>
+    {% include "core_parser_app/commons/file_uploader.html" with form=form module_id=module_id %}
 </form>
