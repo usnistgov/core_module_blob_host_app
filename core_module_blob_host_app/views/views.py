@@ -68,7 +68,7 @@ class BlobHostModule(AbstractPopupModule):
                 user_id=str(request.user.id) if request.user.id else None,
             )
             blob.blob = uploaded_file
-            blob_api.insert(blob)
+            blob_api.insert(blob, request.user)
 
             blob_pid = None
 
