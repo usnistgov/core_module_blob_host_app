@@ -1,5 +1,6 @@
 """ Blob host module
 """
+import logging
 import re
 from urllib.parse import urljoin
 
@@ -13,6 +14,8 @@ from core_module_blob_host_app.views.forms import BLOBHostForm
 from core_parser_app.tools.modules.views.builtin.popup_module import AbstractPopupModule
 from core_parser_app.tools.modules.views.module import AbstractModule
 from xml_utils.xsd_tree.operations.xml_entities import XmlEntities
+
+logger = logging.getLogger(__name__)
 
 
 class BlobHostModule(AbstractPopupModule):
@@ -96,7 +99,8 @@ class BlobHostModule(AbstractPopupModule):
 
             # Retrieve download URI.
             return blob_pid if blob_pid else get_blob_download_uri(blob, request)
-        except Exception as exc:  # FIXME log exception
+        except Exception as exc:
+            logger.log(str(exc))
             self.error = "An unexpected error occurred."
             return data
 
