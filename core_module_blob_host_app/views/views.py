@@ -1,5 +1,6 @@
 """ Blob host module
 """
+import logging
 import re
 from urllib.parse import urljoin
 
@@ -8,11 +9,13 @@ from django.urls import reverse
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
-from core_module_blob_host_app import settings as blob_host_settings
-from core_module_blob_host_app.views.forms import BLOBHostForm
 from core_parser_app.tools.modules.views.builtin.popup_module import AbstractPopupModule
 from core_parser_app.tools.modules.views.module import AbstractModule
 from xml_utils.xsd_tree.operations.xml_entities import XmlEntities
+from core_module_blob_host_app import settings as blob_host_settings
+from core_module_blob_host_app.views.forms import BLOBHostForm
+
+logger = logging.getLogger(__name__)
 
 
 class BlobHostModule(AbstractPopupModule):
@@ -53,6 +56,12 @@ class BlobHostModule(AbstractPopupModule):
         )
 
     def retrieve_post_data(self, request):
+        """retrieve_post_data
+        Args:
+            request:
+
+        Returns:
+        """
         data = ""
         try:
             form = BLOBHostForm(request.POST, request.FILES)
@@ -96,7 +105,8 @@ class BlobHostModule(AbstractPopupModule):
 
             # Retrieve download URI.
             return blob_pid if blob_pid else get_blob_download_uri(blob, request)
-        except Exception as exc:  # FIXME log exception
+        except Exception as exc:
+            logger.log(str(exc))
             self.error = "An unexpected error occurred."
             return data
 
