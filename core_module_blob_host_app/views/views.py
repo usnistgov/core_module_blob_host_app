@@ -9,7 +9,9 @@ from django.urls import reverse
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
-from core_parser_app.tools.modules.views.builtin.popup_module import AbstractPopupModule
+from core_parser_app.tools.modules.views.builtin.popup_module import (
+    AbstractPopupModule,
+)
 from core_parser_app.tools.modules.views.module import AbstractModule
 from xml_utils.xsd_tree.operations.xml_entities import XmlEntities
 from core_module_blob_host_app import settings as blob_host_settings
@@ -101,10 +103,14 @@ class BlobHostModule(AbstractPopupModule):
                             ).record_name,
                         },
                     )
-                    blob_pid = urljoin(blob_host_settings.SERVER_URI, blob_pid_url)
+                    blob_pid = urljoin(
+                        blob_host_settings.SERVER_URI, blob_pid_url
+                    )
 
             # Retrieve download URI.
-            return blob_pid if blob_pid else get_blob_download_uri(blob, request)
+            return (
+                blob_pid if blob_pid else get_blob_download_uri(blob, request)
+            )
         except Exception as exc:
             logger.log(str(exc))
             self.error = "An unexpected error occurred."
@@ -166,7 +172,10 @@ class BlobHostModule(AbstractPopupModule):
         data_xml_entities.escape_xml_entities(data)
         if (
             data_xml_entities.number_of_subs_made > 0
-            or len(re.findall(r"((&amp;)|(&gt;)|(&lt;)|(&apos;)|(&quot;))", data)) > 0
+            or len(
+                re.findall(r"((&amp;)|(&gt;)|(&lt;)|(&apos;)|(&quot;))", data)
+            )
+            > 0
         ):
             context["xml_entities_warning"] = True
 
