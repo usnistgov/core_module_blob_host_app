@@ -26,7 +26,7 @@ chdir(normpath(join(abspath(__file__), pardir)))
 
 setup(
     name="core_module_blob_host_app",
-    version="2.0.0",
+    version="2.1.0",
     description="Blob Host module for the parser core project",
     long_description=long_desc,
     author="NIST IT Lab",
