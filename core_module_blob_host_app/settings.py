@@ -12,10 +12,6 @@ INSTALLED_APPS = getattr(settings, "INSTALLED_APPS", [])
 """ list: List of installed apps.
 """
 
-AUTO_SET_PID = getattr(settings, "AUTO_SET_PID", False)
-""" list: List of installed apps.
-"""
-
 AUTO_ESCAPE_XML_ENTITIES = getattr(settings, "AUTO_ESCAPE_XML_ENTITIES", True)
 """ bool: enable or not the auto escape of the XML predefined entities.
 """

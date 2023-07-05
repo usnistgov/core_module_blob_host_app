@@ -5,23 +5,25 @@ import re
 from urllib.parse import urljoin
 
 from django.urls import reverse
+from django.conf import settings
 
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
+from core_module_blob_host_app.views.forms import BLOBHostForm
 from core_parser_app.tools.modules.views.builtin.popup_module import (
     AbstractPopupModule,
 )
 from core_parser_app.tools.modules.views.module import AbstractModule
 from xml_utils.xsd_tree.operations.xml_entities import XmlEntities
-from core_module_blob_host_app import settings as blob_host_settings
-from core_module_blob_host_app.views.forms import BLOBHostForm
 
 logger = logging.getLogger(__name__)
 
 
 class BlobHostModule(AbstractPopupModule):
     """BLOB host module"""
+
+    error = None
 
     def __init__(self):
         """Initialize module"""
@@ -84,7 +86,7 @@ class BlobHostModule(AbstractPopupModule):
             blob_pid = None
 
             # Retrieve Blob PID if the core_linked_records_app is installed
-            if "core_linked_records_app" in blob_host_settings.INSTALLED_APPS:
+            if "core_linked_records_app" in settings.INSTALLED_APPS:
                 from core_linked_records_app.components.pid_settings import (
                     api as pid_settings_api,
                 )
@@ -97,23 +99,21 @@ class BlobHostModule(AbstractPopupModule):
                     blob_pid_url = reverse(
                         "core_linked_records_provider_record",
                         kwargs={
-                            "provider": "local",
+                            "provider": settings.ID_PROVIDER_SYSTEM_NAME,
                             "record": linked_records_blob_api.get_pid_for_blob(
                                 str(blob.id)
                             ).record_name,
                         },
                     )
-                    blob_pid = urljoin(
-                        blob_host_settings.SERVER_URI, blob_pid_url
-                    )
+                    blob_pid = urljoin(settings.SERVER_URI, blob_pid_url)
 
             # Retrieve download URI.
             return (
                 blob_pid if blob_pid else get_blob_download_uri(blob, request)
             )
         except Exception as exc:
-            logger.log(str(exc))
-            self.error = "An unexpected error occurred."
+            self.error = "An unexpected error occurred"
+            logger.error(f"{self.error}: {str(exc)}")
             return data
 
     def _retrieve_data(self, request):
@@ -137,7 +137,7 @@ class BlobHostModule(AbstractPopupModule):
 
         return (
             data_xml_entities.escape_xml_entities(data)
-            if blob_host_settings.AUTO_ESCAPE_XML_ENTITIES
+            if settings.AUTO_ESCAPE_XML_ENTITIES
             else data
         )
 
