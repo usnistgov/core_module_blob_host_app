@@ -5,11 +5,11 @@ import re
 from urllib.parse import urljoin
 
 from django.urls import reverse
-from django.conf import settings
 
 from core_main_app.components.blob import api as blob_api
 from core_main_app.components.blob.models import Blob
 from core_main_app.components.blob.utils import get_blob_download_uri
+from core_module_blob_host_app import settings
 from core_module_blob_host_app.views.forms import BLOBHostForm
 from core_parser_app.tools.modules.views.builtin.popup_module import (
     AbstractPopupModule,
@@ -87,6 +87,9 @@ class BlobHostModule(AbstractPopupModule):
 
             # Retrieve Blob PID if the core_linked_records_app is installed
             if "core_linked_records_app" in settings.INSTALLED_APPS:
+                from core_linked_records_app import (
+                    settings as linked_records_settings,
+                )
                 from core_linked_records_app.components.pid_settings import (
                     api as pid_settings_api,
                 )
@@ -99,7 +102,7 @@ class BlobHostModule(AbstractPopupModule):
                     blob_pid_url = reverse(
                         "core_linked_records_provider_record",
                         kwargs={
-                            "provider": settings.ID_PROVIDER_SYSTEM_NAME,
+                            "provider": linked_records_settings.ID_PROVIDER_SYSTEM_NAME,
                             "record": linked_records_blob_api.get_pid_for_blob(
                                 str(blob.id)
                             ).record_name,

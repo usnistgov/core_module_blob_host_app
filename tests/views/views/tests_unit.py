@@ -4,8 +4,6 @@ from unittest import TestCase
 from unittest.mock import patch, Mock
 from urllib.parse import urljoin
 
-from django.test import override_settings
-
 from core_main_app.utils.tests_tools.MockUser import create_mock_user
 from core_main_app.utils.tests_tools.RequestMock import create_mock_request
 from core_module_blob_host_app.views import views as blob_host_views
@@ -92,15 +90,16 @@ class TestBlobHostModuleRetrievePostData(TestCase):
         self.assertEqual(response, "")
 
     @patch.object(blob_host_views, "get_blob_download_uri")
+    @patch.object(blob_host_views, "settings")
     @patch.object(blob_host_views, "blob_api")
     @patch.object(blob_host_views, "Blob")
     @patch.object(blob_host_views, "BLOBHostForm")
-    @override_settings(INSTALLED_APPS=[])
     def test_default_returns_blob_download_uri(
         self,
         mock_blob_host_form,
         mock_blob,
         mock_blob_api,
+        mock_settings,
         mock_get_blob_download_uri,
     ):
         """test_default_returns_blob_download_uri"""
@@ -114,6 +113,9 @@ class TestBlobHostModuleRetrievePostData(TestCase):
         mock_blob_api.insert.return_value = None
         expected_response = "mock_get_blob_download_uri"
         mock_get_blob_download_uri.return_value = expected_response
+        mock_settings_object = Mock()
+        mock_settings_object.INSTALLED_APPS = []
+        mock_settings.return_value = mock_settings_object
 
         blob_host_module = blob_host_views.BlobHostModule()
         response = blob_host_module.retrieve_post_data(self.request)
