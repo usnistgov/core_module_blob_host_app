@@ -98,13 +98,13 @@ class BlobHostModule(AbstractPopupModule):
                 )
 
                 # Create blob PID if `auto_set_pid` is True
-                if pid_settings_api.get().auto_set_pid:
+                if pid_settings_api.get(request.user).auto_set_pid:
                     blob_pid_url = reverse(
                         "core_linked_records_provider_record",
                         kwargs={
                             "provider": linked_records_settings.ID_PROVIDER_SYSTEM_NAME,
                             "record": linked_records_blob_api.get_pid_for_blob(
-                                str(blob.id)
+                                str(blob.id), request.user
                             ).record_name,
                         },
                     )
