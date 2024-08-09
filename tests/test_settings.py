@@ -15,7 +15,6 @@ INSTALLED_APPS = [
     "django.contrib.sites",
     "django.contrib.staticfiles",
     # Extra apps
-    "defender",
     "menu",
     # Local apps
     "core_main_app",
