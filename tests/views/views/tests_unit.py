@@ -1,5 +1,6 @@
 """ Unit tests for core_module_blob_host_app views.
 """
+
 from unittest import TestCase
 from unittest.mock import patch, Mock
 from urllib.parse import urljoin

@@ -1,5 +1,6 @@
 """ Blob host module
 """
+
 import logging
 import re
 from urllib.parse import urljoin
