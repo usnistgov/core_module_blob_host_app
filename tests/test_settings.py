@@ -62,7 +62,7 @@ DATABASES = {
 
 MONGODB_INDEXING = False
 MONGODB_ASYNC_SAVE = False
-
+ENABLE_ALLAUTH = False
 ENABLE_SAML2_SSO_AUTH = False
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
