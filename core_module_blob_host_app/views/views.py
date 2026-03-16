@@ -1,5 +1,4 @@
-""" Blob host module
-"""
+"""Blob host module"""
 
 import logging
 import re

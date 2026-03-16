@@ -1,5 +1,4 @@
-"""Blob host forms
-"""
+"""Blob host forms"""
 
 from django import forms
 
